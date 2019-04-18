@@ -13,10 +13,18 @@ use Service\Discount\IDiscount;
 use Service\Discount\NullObject;
 use Service\User\ISecurity;
 use Service\User\Security;
+use SplSubject;
+use SplObserver;
+use SplObjectStorage;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class Basket
+class Basket implements SplSubject
 {
+    /**
+     * @var SplObjectStorage
+     */
+    private $observers;
+
     /**
      * Сессионный ключ списка всех продуктов корзины
      */
@@ -33,6 +41,8 @@ class Basket
     public function __construct(SessionInterface $session)
     {
         $this->session = $session;
+
+        $this->observers = new SplObjectStorage();
     }
 
     /**
@@ -122,6 +132,8 @@ class Basket
 
         $user = $security->getUser();
         $communication->process($user, 'checkout_template');
+
+        $this->notify();
     }
 
     /**
@@ -143,4 +155,25 @@ class Basket
     {
         return $this->session->get(static::BASKET_DATA_KEY, []);
     }
+
+
+    // Реализуем паттерн Наблюдатель.
+
+    public function attach(SplObserver $observer)
+    {
+        $this->observers->attach($observer);
+    }
+
+    public function detach(SplObserver $observer)
+    {
+        $this->observers->detach($observer);
+    }
+
+    public function notify()
+    {
+        foreach ($this->observers as $observer) {
+            $observer->update($this);
+        }
+    }
+
 }

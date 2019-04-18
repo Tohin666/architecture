@@ -13,6 +13,12 @@ class Email implements ICommunication
      */
     public function process(Model\Entity\User $user, string $templateName, array $params = []): void
     {
+        $email = $user->getEmail();
         // Вызываем метод по формированию тела письма и последующего его отправления
+    }
+
+    public function send(string $text): void
+    {
+        // Отправляется письмо с текстом.
     }
 }

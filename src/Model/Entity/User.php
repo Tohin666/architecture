@@ -32,19 +32,26 @@ class User
     private $role;
 
     /**
+     * @var string
+     */
+    private $email;
+
+    /**
      * @param int $id
      * @param string $name
      * @param string $login
      * @param string $password
      * @param Role $role
+     * @param string $email
      */
-    public function __construct(int $id, string $name, string $login, string $password, Role $role)
+    public function __construct(int $id, string $name, string $login, string $password, Role $role, string $email = null)
     {
         $this->id = $id;
         $this->name = $name;
         $this->login = $login;
         $this->passwordHash = $password;
         $this->role = $role;
+        $this->email = $email;
     }
 
     /**
@@ -85,5 +92,13 @@ class User
     public function getRole(): Role
     {
         return $this->role;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
     }
 }

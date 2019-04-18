@@ -55,7 +55,8 @@ class User
             $user['name'],
             $user['login'],
             $user['password'],
-            new Entity\Role($role['id'], $role['title'], $role['role'])
+            new Entity\Role($role['id'], $role['title'], $role['role']),
+            $user['email']
         );
     }
 
@@ -78,7 +79,8 @@ class User
                 'name' => 'Super Admin',
                 'login' => 'root',
                 'password' => '$2y$10$GnZbayyccTIDIT5nceez7u7z1u6K.znlEf9Jb19CLGK0NGbaorw8W', // 1234
-                'role' => $admin
+                'role' => $admin,
+                'email' => 'admin@mail.ru'
             ],
             [
                 'id' => 2,
