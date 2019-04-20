@@ -46,12 +46,7 @@ class OrderController
             return $this->redirect('user_authentication');
         }
 
-        $observer = new BasketObserver();
-
-        $basket = new Basket($request->getSession());
-        $basket->attach($observer);
-
-        $basket->checkout();
+        (new Basket($request->getSession()))->checkout();
 
         return $this->render('order/checkout.html.php');
     }

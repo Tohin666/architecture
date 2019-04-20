@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Service\Order;
 
+use Framework\Registry;
 use Model;
 use Service\Billing\Card;
 use Service\Billing\IBilling;
@@ -43,6 +44,12 @@ class Basket implements SplSubject
         $this->session = $session;
 
         $this->observers = new SplObjectStorage();
+
+        // наблюдателей определили в параметрах
+        foreach (Registry::getDataConfig('order.listeners') as $observer){
+//            $this->attach($observer);
+            $this->attach(new $observer());
+        }
     }
 
     /**
