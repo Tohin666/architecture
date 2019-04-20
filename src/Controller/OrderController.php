@@ -6,6 +6,7 @@ namespace Controller;
 
 use Framework\Render;
 use Service\Order\Basket;
+use Service\Order\BasketObserver;
 use Service\User\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +46,12 @@ class OrderController
             return $this->redirect('user_authentication');
         }
 
-        (new Basket($request->getSession()))->checkout();
+        $observer = new BasketObserver();
+
+        $basket = new Basket($request->getSession());
+        $basket->attach($observer);
+
+        $basket->checkout();
 
         return $this->render('order/checkout.html.php');
     }

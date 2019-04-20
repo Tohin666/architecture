@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Service\Product;
 
@@ -35,7 +35,20 @@ class Product
         // $sortType === 'price'; // Сортировка по цене
         // $sortType === 'name'; // Сортировка по имени
 
-        return $productList;
+        switch ($sortType) {
+            case 'price':
+                $sorterStrategy = new SortByPrice();
+                break;
+            case 'name':
+                $sorterStrategy = new SortByName();
+                break;
+            default:
+                $sorterStrategy = new SortByName();
+        }
+
+        $productSorter = new ProductSorter($sorterStrategy);
+
+        return $productSorter->sort($productList);
     }
 
     /**
