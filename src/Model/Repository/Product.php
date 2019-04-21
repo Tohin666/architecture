@@ -21,8 +21,22 @@ class Product
         }
 
         $productList = [];
+        // Реализуем шаблон прототип, чтобы не создавать каждый раз сущность продукт, а клонировать его.
+        /** @var Entity\Product $prototype */
+        $prototype = null;
         foreach ($this->getDataFromSource(['id' => $ids]) as $item) {
-            $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
+
+            if ($prototype) {
+                $product = clone $prototype;
+                $product->setId($item['id']);
+                $product->setName($item['name']);
+                $product->setPrice($item['price']);
+            } else {
+                $product = new Entity\Product($item['id'], $item['name'], $item['price']);
+            }
+
+            $productList[] = $product;
+//            $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
         }
 
         return $productList;
@@ -36,8 +50,22 @@ class Product
     public function fetchAll(): array
     {
         $productList = [];
+        // Реализуем шаблон прототип, чтобы не создавать каждый раз сущность продукт, а клонировать его.
+        /** @var Entity\Product $prototype */
+        $prototype = null;
         foreach ($this->getDataFromSource() as $item) {
-            $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
+
+            if ($prototype) {
+                $product = clone $prototype;
+                $product->setId($item['id']);
+                $product->setName($item['name']);
+                $product->setPrice($item['price']);
+            } else {
+                $product = new Entity\Product($item['id'], $item['name'], $item['price']);
+            }
+
+            $productList[] = $product;
+//            $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
         }
 
         return $productList;
