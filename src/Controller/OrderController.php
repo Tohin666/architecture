@@ -6,7 +6,7 @@ namespace Controller;
 
 use Framework\Render;
 use Service\Order\Basket;
-use Service\Order\BasketObserver;
+use Service\Order\Composite\OrderForm;
 use Service\User\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +30,14 @@ class OrderController
         $productList = (new Basket($request->getSession()))->getProductsInfo();
         $isLogged = (new Security($request->getSession()))->isLogged();
 
-        return $this->render('order/info.html.php', ['productList' => $productList, 'isLogged' => $isLogged]);
+        // Реализуем паттерн композит для построения формы.
+        $orderForm = new OrderForm();
+        $form = $orderForm->getProductForm();
+        $orderForm->loadProductData($form);
+        $orderForm = $orderForm->renderProduct($form);
+
+        return $this->render('order/info.html.php',
+            ['productList' => $productList, 'isLogged' => $isLogged, 'orderForm' => $orderForm]);
     }
 
     /**

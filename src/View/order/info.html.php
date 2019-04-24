@@ -3,7 +3,8 @@
 /** @var \Model\Entity\Product[] $productList */
 /** @var bool $isLogged */
 /** @var \Closure $path */
-$body = function () use ($productList, $isLogged, $path) {
+/** @var \Service\Order\Composite\OrderForm $orderForm */
+$body = function () use ($productList, $isLogged, $path, $orderForm) {
     ?>
     <form method="post">
         <table cellpadding="10">
@@ -31,7 +32,8 @@ $body = function () use ($productList, $isLogged, $path) {
         if ($isLogged) {
             ?>
             <tr>
-                <td colspan="3" align="center"><input type="submit" value="Оформить заказ" /></td>
+<!--                <td colspan="3" align="center"><input type="submit" value="Оформить заказ" /></td>-->
+                <td colspan="3" align="center"> <?= $orderForm ?> </td>
             </tr>
 <?php
         } else {
