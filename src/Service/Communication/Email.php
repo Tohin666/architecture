@@ -5,8 +5,10 @@ declare(strict_types = 1);
 namespace Service\Communication;
 
 use Model;
+use SplObserver;
+use SplSubject;
 
-class Email implements ICommunication
+class Email implements ICommunication, SplObserver
 {
     /**
      * @inheritdoc
@@ -17,8 +19,10 @@ class Email implements ICommunication
         // Вызываем метод по формированию тела письма и последующего его отправления
     }
 
-    public function send(string $text): void
+
+    public function update(SplSubject $subject)
     {
-        // Отправляется письмо с текстом.
+        // "Вы успешно оформили заказ!"
     }
+
 }

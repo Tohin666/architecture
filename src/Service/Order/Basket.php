@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Service\Order;
 
+use Framework\Registry;
 use Model;
 use Service\Billing\Card;
 use Service\Billing\IBilling;
@@ -43,6 +44,12 @@ class Basket implements SplSubject
         $this->session = $session;
 
         $this->observers = new SplObjectStorage();
+
+        // наблюдателей определили в параметрах
+        foreach (Registry::getDataConfig('order.listeners') as $observer){
+//            $this->attach($observer);
+            $this->attach(new $observer());
+        }
     }
 
     /**
@@ -91,50 +98,65 @@ class Basket implements SplSubject
      */
     public function checkout(): void
     {
+        $basketBuilder = new BasketBuilder();
+
         // Здесь должна быть некоторая логика выбора способа платежа
         $billing = new Card();
+        $basketBuilder->setBilling($billing);
 
         // Здесь должна быть некоторая логика получения информации о скидки пользователя
         $discount = new NullObject();
+        $basketBuilder->setDiscount($discount);
 
         // Здесь должна быть некоторая логика получения способа уведомления пользователя о покупке
         $communication = new Email();
+        $basketBuilder->setCommunication($communication);
 
         $security = new Security($this->session);
+        $basketBuilder->setSecurity($security);
 
-        $this->checkoutProcess($discount, $billing, $security, $communication);
+        $basketBuilder->setBasket($this);
+
+        $basketBuilder->build()->checkoutProcess();
+//        $this->checkoutProcess($discount, $billing, $security, $communication);
     }
 
-    /**
-     * Проведение всех этапов заказа
-     *
-     * @param IDiscount $discount,
-     * @param IBilling $billing,
-     * @param ISecurity $security,
-     * @param ICommunication $communication
-     * @return void
-     */
-    public function checkoutProcess(
-        IDiscount $discount,
-        IBilling $billing,
-        ISecurity $security,
-        ICommunication $communication
-    ): void {
-        $totalPrice = 0;
-        foreach ($this->getProductsInfo() as $product) {
-            $totalPrice += $product->getPrice();
-        }
+    // Выделил в отдельный класс CheckoutProcess.
 
-        $discount = $discount->getDiscount();
-        $totalPrice = $totalPrice - $totalPrice / 100 * $discount;
+//    /**
+//     * Проведение всех этапов заказа
+//     *
+//     * @param IDiscount $discount,
+//     * @param IBilling $billing,
+//     * @param ISecurity $security,
+//     * @param ICommunication $communication
+//     * @return void
+//     */
+//    public function checkoutProcess(
+//        IDiscount $discount,
+//        IBilling $billing,
+//        ISecurity $security,
+//        ICommunication $communication
+//    ): void {
+//        $totalPrice = 0;
+//        foreach ($this->getProductsInfo() as $product) {
+//            $totalPrice += $product->getPrice();
+//        }
+//
+//        $discount = $discount->getDiscount();
+//        $totalPrice = $totalPrice - $totalPrice / 100 * $discount;
+//
+//        $billing->pay($totalPrice);
+//
+//        $user = $security->getUser();
+//        $communication->process($user, 'checkout_template');
+//
+//        $this->notify();
+//    }
 
-        $billing->pay($totalPrice);
 
-        $user = $security->getUser();
-        $communication->process($user, 'checkout_template');
-
-        $this->notify();
-    }
+    // Данный фабричный метод уже реализован в классе Service/Product/Product, и здесь полностью дублируется. Я думаю
+    // здесь пример антипаттерна, и нужно вызывать этот метод из класса Product.
 
     /**
      * Фабричный метод для репозитория Product
