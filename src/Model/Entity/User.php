@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Model\Entity;
 
@@ -41,10 +41,11 @@ class User
      * @param string $name
      * @param string $login
      * @param string $password
-     * @param Role $role
+     * @param int $role
      * @param string $email
      */
-    public function __construct(int $id, string $name, string $login, string $password, Role $role, string $email = null)
+    public function __construct(int $id, string $name, string $login, string $password, int $role, string $email = null)
+//    public function __construct(int $id, string $name, string $login, string $password, Role $role, string $email = null)
     {
         $this->id = $id;
         $this->name = $name;
